@@ -5,7 +5,7 @@ from sys import exit
 # settings for display window
 py.init()
 screen = py.display.set_mode((800, 400))
-py.display.set_caption('Gold Rush: Coin Collector')
+py.display.set_caption('Obezag Gold Rush: Coin Collector')
 pygame_icon = py.image.load('bitcoin-cryptocurrency-in-pixel-art-style-illustration-free-png.png').convert()
 py.display.set_icon(pygame_icon)
 clock = py.time.Clock()
