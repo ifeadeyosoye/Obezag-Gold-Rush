@@ -1,22 +1,22 @@
 # importing modules
 import pygame as py
 from sys import exit
-import time
+# import time
 
 # settings for display window
 py.init()
 screen = py.display.set_mode((800, 400))
 py.display.set_caption('Obezag Gold Rush: Coin Collector')
-pygame_icon = py.image.load('bitcoin-cryptocurrency-in-pixel-art-style-illustration-free-png.png').convert()
+pygame_icon = py.image.load('bitcoin-cryptocurrency-in-pixel-art-style-illustration-free-png.png').convert_alpha()
 py.display.set_icon(pygame_icon)
 clock = py.time.Clock()
 test_font = py.font.Font('Pixeltype.ttf', 50)
-#game_active = True
+# game_active = True
 
 # SURFACES
 # ground/sky surface
 sky_surf = py.image.load('Sky.png').convert()
-ground_surf = py.image.load('ground.png')
+ground_surf = py.image.load('ground.png').convert()
 
 # text surfaces
 score_surf = test_font.render('My Game', False, (64,64,64))
@@ -42,7 +42,7 @@ while True:
             exit()
         if (event.type == py.MOUSEBUTTONDOWN) and (player_rect.bottom >= 300):
             if player_rect.collidepoint(py.mouse.get_pos()):
-               player_gravity = -19
+                player_gravity = -19
         if (event.type == py.KEYDOWN) and (player_rect.bottom >= 300):
             if event.key == py.K_SPACE:
                 player_gravity = -19
@@ -69,11 +69,8 @@ while True:
 
         # collision
         if volleyball_rect.colliderect(player_rect):
-            time.sleep(0.5)
             py.quit()
             quit()
-
-
     py.display.update()
     # this while true loop should not run faster than 60 times per second
     clock.tick(60)
