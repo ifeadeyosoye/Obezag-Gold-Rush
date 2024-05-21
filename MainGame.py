@@ -1,7 +1,7 @@
 # importing modules
 import pygame as py
 from sys import exit
-# import time
+import time
 
 # settings for display window
 py.init()
@@ -11,7 +11,7 @@ pygame_icon = py.image.load('bitcoin-cryptocurrency-in-pixel-art-style-illustrat
 py.display.set_icon(pygame_icon)
 clock = py.time.Clock()
 test_font = py.font.Font('Pixeltype.ttf', 50)
-# game_active = True
+game_active = True
 
 # SURFACES
 # ground/sky surface
@@ -21,6 +21,8 @@ ground_surf = py.image.load('ground.png').convert()
 # text surfaces
 score_surf = test_font.render('My Game', False, (64,64,64))
 score_rect = score_surf.get_rect(center = (400,26))
+ending_surf = test_font.render('Press Space to Start Again!', False, (64,64,64))
+ending_rect = ending_surf.get_rect(center = (400, 50))
 
 # volleyball surface
 volleyball_surf = py.image.load('volleyball1.png').convert_alpha()
@@ -29,6 +31,10 @@ volleyball_rect = volleyball_surf.get_rect(bottomright = (600, 304))
 # player surface
 player_surf = py.image.load("person-walking1.png").convert_alpha()
 player_rect = player_surf.get_rect(midbottom = (80,303))
+# ending scene
+player_ending_surf = py.image.load("person_standing.png").convert_alpha()
+player_ending_surf1 = py.transform.scale(player_ending_surf, (192,252))
+player_ending_rect = player_ending_surf1.get_rect(center = (400, 200))
 
 # player gravity
 player_gravity = 0
@@ -40,13 +46,22 @@ while True:
         if event.type == py.QUIT:
             py.quit()
             exit()
-        if (event.type == py.MOUSEBUTTONDOWN) and (player_rect.bottom >= 300):
-            if player_rect.collidepoint(py.mouse.get_pos()):
-                player_gravity = -19
-        if (event.type == py.KEYDOWN) and (player_rect.bottom >= 300):
-            if event.key == py.K_SPACE:
-                player_gravity = -19
 
+        if game_active == True:
+            if (event.type == py.MOUSEBUTTONDOWN) and (player_rect.bottom >= 300):
+                if player_rect.collidepoint(py.mouse.get_pos()):
+                    player_gravity = -19
+
+            if (event.type == py.KEYDOWN) and (player_rect.bottom >= 300):
+                if event.key == py.K_SPACE:
+                    player_gravity = -19
+        else:
+            if (event.type == py.KEYDOWN) and (event.key == py.K_SPACE):
+                game_active = True
+                volleyball_rect.left = 800
+
+
+    if game_active == True:
         # placing sky, ground, and score
         screen.blit(sky_surf, (0,0))
         screen.blit(ground_surf, (0,300))
@@ -69,8 +84,15 @@ while True:
 
         # collision
         if volleyball_rect.colliderect(player_rect):
-            py.quit()
-            quit()
+            game_active = False
+    else:
+        screen.fill("lightskyblue")
+        py.draw.rect(screen, 'powderblue', ending_rect)
+        py.draw.rect(screen, 'powderblue', ending_rect, 10)
+        screen.blit(ending_surf, ending_rect)
+        screen.blit(player_ending_surf1, player_ending_rect)
+
+
     py.display.update()
     # this while true loop should not run faster than 60 times per second
     clock.tick(60)
