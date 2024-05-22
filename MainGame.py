@@ -1,3 +1,8 @@
+# things to do
+# music/sound effects; other obstacles; increase difficulty as time goes on; animate objects; extra ability/mechanic (invincibility?), menu screen, tutorial screen, home button in menu screen?
+
+
+
 # importing modules
 import pygame as py
 from sys import exit
@@ -136,10 +141,3 @@ while True:
     py.display.update()
     # this while true loop should not run faster than 60 times per second
     clock.tick(60)
-
-
-
-
-
-
-
