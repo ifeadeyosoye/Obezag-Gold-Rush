@@ -94,11 +94,11 @@ volleyball_surf = volleyball_frames[volleyball_frame_index]
 #volleyball_rect = volleyball_surf.get_rect(bottomright = (600, 304))
 
 # bird surfaces
-bird_surf = py.image.load("bird1.png").convert_alpha()
-#bird_frame1 =
-#bird_frame2 =
-#bird_frames = [bird_frame1, bird_frame2]
-# bird_frame_index = 0
+bird_frame1 = py.image.load('bird1.png').convert_alpha()
+bird_frame2 = py.image.load('bird2.png').convert_alpha()
+bird_frames = [bird_frame1, bird_frame2]
+bird_frame_index = 0
+bird_surf = bird_frames[bird_frame_index]
 
 obstacle_rect_list = []
 
@@ -126,14 +126,14 @@ coin_rect = coin_surf.get_rect(bottomright = (randint(1500, 3000), 300))
 player_gravity = 0
 # coin count
 score_count = 0
-# Timer
+# Timers
 obstacle_timer = py.USEREVENT + 1
 py.time.set_timer(obstacle_timer, 1400)
 
 volleyball_animation_timer = py.USEREVENT + 2
 py.time.set_timer(volleyball_animation_timer, 150)
-#bird_animation_timer = py.USEREVENT + 2
-#py.time.set_timer(bird_animation_timer, 200)
+bird_animation_timer = py.USEREVENT + 2
+py.time.set_timer(bird_animation_timer, 200)
 # game active
 game_active = True
 
@@ -169,6 +169,12 @@ while True:
                 if volleyball_frame_index > (len(volleyball_frames) - 1):
                     volleyball_frame_index = 0
                 volleyball_surf = volleyball_frames[volleyball_frame_index]
+
+            if event.type == bird_animation_timer:
+                bird_frame_index += 1
+                if bird_frame_index > (len(bird_frames) -1):
+                    bird_frame_index = 0
+                bird_surf = bird_frames[bird_frame_index]
 
 
 
