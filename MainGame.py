@@ -34,8 +34,10 @@ def obstacle_movement(obstacle_list):
     if obstacle_list:
         for obstacle_rect in obstacle_list:
             obstacle_rect.x -= 8
-            screen.blit(volleyball_surf, obstacle_rect)
-
+            if obstacle_rect.bottom == 304:
+                screen.blit(volleyball_surf, obstacle_rect)
+            else:
+                screen.blit(bird_surf, obstacle_rect)
         obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
         return obstacle_list
     else: return []
@@ -70,7 +72,9 @@ ending_rect = ending_surf.get_rect(center = (400, 50))
 # OBSTACLES
 # volleyball surface
 volleyball_surf = py.image.load('volleyball1.png').convert_alpha()
-volleyball_rect = volleyball_surf.get_rect(bottomright = (600, 304))
+#volleyball_rect = volleyball_surf.get_rect(bottomright = (600, 304))
+
+bird_surf = py.image.load("Fly1.png").convert_alpha()
 obstacle_rect_list = []
 
 # player surface
@@ -84,7 +88,7 @@ player_ending_rect = player_ending_surf1.get_rect(center = (400, 200))
 
 # coin surface
 coin_surf = py.image.load('coin.png').convert_alpha()
-coin_rect = coin_surf.get_rect(bottomright = (900, 300))
+coin_rect = coin_surf.get_rect(bottomright = (randint(1500, 3000), 300))
 
 # OTHER VALUES
 # player gravity
@@ -119,7 +123,10 @@ while True:
                 #volleyball_rect.left = 800
 
         if event.type == obstacle_timer and game_active:
-            obstacle_rect_list.append(volleyball_surf.get_rect(bottomright = (randint(900, 1110), 304)))
+            if randint(0,2):
+                obstacle_rect_list.append(volleyball_surf.get_rect(bottomright = (randint(900, 1110), 304)))
+            else:
+                obstacle_rect_list.append(bird_surf.get_rect(bottomright = (randint(900, 1110), 170)))
 
 
     if game_active == True:
