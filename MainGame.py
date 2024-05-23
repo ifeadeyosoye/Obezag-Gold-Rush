@@ -74,7 +74,7 @@ ending_rect = ending_surf.get_rect(center = (400, 50))
 volleyball_surf = py.image.load('volleyball1.png').convert_alpha()
 #volleyball_rect = volleyball_surf.get_rect(bottomright = (600, 304))
 
-bird_surf = py.image.load("Fly1.png").convert_alpha()
+bird_surf = py.image.load("bird1.png").convert_alpha()
 obstacle_rect_list = []
 
 # player surface
