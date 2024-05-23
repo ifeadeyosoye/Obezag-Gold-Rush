@@ -34,7 +34,7 @@ def obstacle_movement(obstacle_list):
     if obstacle_list:
         for obstacle_rect in obstacle_list:
             obstacle_rect.x -= 8
-            if obstacle_rect.bottom == 304:
+            if obstacle_rect.bottom == 300:
                 screen.blit(volleyball_surf, obstacle_rect)
             else:
                 screen.blit(bird_surf, obstacle_rect)
@@ -47,6 +47,19 @@ def collisions(player, obstacles):
         for obstacle_rect in obstacles:
             if player.colliderect(obstacle_rect): return False
     return True
+
+def player_animation():
+    """display jump/walking animations for player"""
+    global player_surf, player_index
+
+    if player_rect.bottom < 303:
+        player_surf = player_jump
+    else:
+        player_index += 0.14
+        if player_index > len(player_walk):
+            player_index = 0
+        player_surf = player_walk[int(player_index)]
+
 
 
 # settings for display window
@@ -71,14 +84,32 @@ ending_rect = ending_surf.get_rect(center = (400, 50))
 
 # OBSTACLES
 # volleyball surface
-volleyball_surf = py.image.load('volleyball1.png').convert_alpha()
+volleyball_frame1 = py.image.load('volleyball11.png').convert_alpha()
+volleyball_frame2 = py.image.load('volleyball2.png').convert_alpha()
+volleyball_frame3 = py.image.load('volleyball3.png').convert_alpha()
+volleyball_frame4 = py.image.load('volleyball4.png').convert_alpha()
+volleyball_frames = [volleyball_frame1, volleyball_frame2, volleyball_frame3, volleyball_frame4]
+volleyball_frame_index = 0
+volleyball_surf = volleyball_frames[volleyball_frame_index]
 #volleyball_rect = volleyball_surf.get_rect(bottomright = (600, 304))
 
+# bird surfaces
 bird_surf = py.image.load("bird1.png").convert_alpha()
+#bird_frame1 =
+#bird_frame2 =
+#bird_frames = [bird_frame1, bird_frame2]
+# bird_frame_index = 0
+
 obstacle_rect_list = []
 
 # player surface
-player_surf = py.image.load("person-walking1.png").convert_alpha()
+player_walk1 = py.image.load("person-walking1.png").convert_alpha()
+player_walk2 = py.image.load("person-walking2.png").convert_alpha()
+player_walk3 = py.image.load("person-walking3.png").convert_alpha()
+player_walk = [player_walk1, player_walk2, player_walk3]
+player_index = 0
+player_jump = py.image.load("person-walking1.png").convert_alpha()
+player_surf = player_walk[player_index]
 player_rect = player_surf.get_rect(midbottom = (80, 303))
 
 # ending scene player surfaces
@@ -98,6 +129,11 @@ score_count = 0
 # Timer
 obstacle_timer = py.USEREVENT + 1
 py.time.set_timer(obstacle_timer, 1400)
+
+volleyball_animation_timer = py.USEREVENT + 2
+py.time.set_timer(volleyball_animation_timer, 150)
+#bird_animation_timer = py.USEREVENT + 2
+#py.time.set_timer(bird_animation_timer, 200)
 # game active
 game_active = True
 
@@ -121,12 +157,24 @@ while True:
             if (event.type == py.KEYDOWN) and (event.key == py.K_SPACE):
                 game_active = True
                 #volleyball_rect.left = 800
+        if game_active:
+            if event.type == obstacle_timer:
+                if randint(0,2):
+                    obstacle_rect_list.append(volleyball_surf.get_rect(bottomright = (randint(900, 1110), 300)))
+                else:
+                    obstacle_rect_list.append(bird_surf.get_rect(bottomright = (randint(900, 1110), 170)))
 
-        if event.type == obstacle_timer and game_active:
-            if randint(0,2):
-                obstacle_rect_list.append(volleyball_surf.get_rect(bottomright = (randint(900, 1110), 304)))
-            else:
-                obstacle_rect_list.append(bird_surf.get_rect(bottomright = (randint(900, 1110), 170)))
+            if event.type == volleyball_animation_timer:
+                volleyball_frame_index += 1
+                if volleyball_frame_index > (len(volleyball_frames) - 1):
+                    volleyball_frame_index = 0
+                volleyball_surf = volleyball_frames[volleyball_frame_index]
+
+
+
+
+
+
 
 
     if game_active == True:
@@ -152,6 +200,7 @@ while True:
         player_rect.y += player_gravity
         if player_rect.bottom >= 303:
             player_rect.bottom = 303
+        player_animation()
         screen.blit(player_surf, player_rect)
 
         # Obstacle movement
