@@ -60,13 +60,21 @@ def player_animation():
             player_index = 0
         player_surf = player_walk[int(player_index)]
 
+def coin_animation():
+    global coin_surf, coin_index
+
+    coin_index += 0.045
+    if coin_index > len(coin_frames):
+        coin_index = 0
+    coin_surf = coin_frames[int(coin_index)]
+
 
 
 # settings for display window
 py.init()
 screen = py.display.set_mode((800, 400))
 py.display.set_caption('Obezag Gold Rush: Coin Collector')
-pygame_icon = py.image.load('coin.png').convert_alpha()
+pygame_icon = py.image.load('coin1.png').convert_alpha()
 py.display.set_icon(pygame_icon)
 clock = py.time.Clock()
 test_font = py.font.Font('Pixeltype.ttf', 50)
@@ -118,7 +126,11 @@ player_ending_surf1 = py.transform.scale(player_ending_surf, (192, 252))
 player_ending_rect = player_ending_surf1.get_rect(center = (400, 200))
 
 # coin surface
-coin_surf = py.image.load('coin.png').convert_alpha()
+coin_frame1 = py.image.load('coin1.png').convert_alpha()
+coin_frame2 = py.image.load('coin2.png').convert_alpha()
+coin_frames = [coin_frame1, coin_frame2]
+coin_index = 0
+coin_surf = coin_frames[coin_index]
 coin_rect = coin_surf.get_rect(bottomright = (randint(1500, 3000), 300))
 
 # OTHER VALUES
@@ -176,13 +188,6 @@ while True:
                     bird_frame_index = 0
                 bird_surf = bird_frames[bird_frame_index]
 
-
-
-
-
-
-
-
     if game_active == True:
         # placing sky, ground, and score
         screen.blit(sky_surf, (0,0))
@@ -199,6 +204,7 @@ while True:
         coin_rect.x -= 8
         if coin_rect.right < 0:
             coin_rect.right = 800
+        coin_animation()
         screen.blit(coin_surf, coin_rect)
 
         # Player
