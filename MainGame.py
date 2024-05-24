@@ -6,6 +6,7 @@
 # make game pause for game over sound.
 # add back clicking to jump
 # heart system?
+# hold highest score?
 
 # importing modules
 import pygame as py
@@ -93,39 +94,59 @@ class Obstacle(py.sprite.Sprite):
         if self.rect.x <= -100:
             self.kill()
 
-# class Coin(py.sprite.Sprite):
+class Coin(py.sprite.Sprite):
+    def __init__(self, type):
+        super().__init__()
+        if type == 'coin':
+            coin_frame1 = py.image.load('coin1.png').convert_alpha()
+            coin_frame2 = py.image.load('coin2.png').convert_alpha()
+            self.coin_frames = [coin_frame1, coin_frame2]
+
+        self.coin_index = 0
+        self.image = self.coin_frames[self.coin_index]
+        self.rect = self.image.get_rect(bottomright = (randint(1500, 3000), 300))
+
+    def animation_state(self):
+        self.coin_index += 0.045
+        if self.coin_index > len(self.coin_frames):
+            self.coin_index = 0
+        self.image = self.coin_frames[int(self.coin_index)]
+
+    def destroy(self):
+        global score_count
+
+        if collision_coin_sprite():
+            coin_collect_sound.play()
+            self.kill()
+            score_count += 1
+            display_score(score_count)
+            print(score_count)
+
+    def reset(self):
+        if self.rect.right < 0:
+            self.rect.right = randint(1200, 2500)
+
+    def update(self):
+        self.animation_state()
+        self.rect.x -= 8
+        #self.collision_coin_sprite
+        self.destroy()
+        self.reset()
+        #self.accumulate_score()
+
+# class Score():
 #     def __init__(self):
-#         super().__init__()
-#         coin_frame1 = py.image.load('coin1.png').convert_alpha()
-#         coin_frame2 = py.image.load('coin2.png').convert_alpha()
-#         self.coin_frames = [coin_frame1, coin_frame2]
+#         self.score_count = 0
 #
-#         self.coin_index = 0
-#         self.image = self.coin_frames[self.coin_index]
-#         self.rect = self.image.get_rect(bottomright = (randint(1500, 3000), 300))
-#
-#     def animation_state(self):
-#         self.coin_index += 0.045
-#         if self.coin_index > len(self.coin_frames):
-#             self.coin_index = 0
-#         self.image = self.coin_frames[int(self.coin_index)]
-#
-#     def destroy(self):
+#     def accumulate_score(self):
 #         if collision_coin_sprite():
-#             self.kill()
-#         #screen.blit(self.image, self.rect)
+#             self.score_count += 1
+#             display_score(self.score_count)
 #
-#     def update(self):
-#         self.animation_state()
-#         self.rect.x -= 8
-#         #self.destroy()
+#     def final_score(self):
+#         if game_active == False:
+#             self.score_count = 0
 
-
-
-
-
-
-# functions defined
 
 
 # functions defined
@@ -149,13 +170,13 @@ def display_final_score(score_count):
     py.draw.rect(screen, 'powderblue', ending_score_rect, 10)
     screen.blit(ending_score_surf, ending_score_rect)
 
-def coin_animation():
-    global coin_surf, coin_index
-
-    coin_index += 0.045
-    if coin_index > len(coin_frames):
-        coin_index = 0
-    coin_surf = coin_frames[int(coin_index)]
+# def coin_animation():
+#     global coin_surf, coin_index
+#
+#     coin_index += 0.045
+#     if coin_index > len(coin_frames):
+#         coin_index = 0
+#     coin_surf = coin_frames[int(coin_index)]
 
 def collision_sprite():
     global death_sound
@@ -199,11 +220,15 @@ def collision_sprite():
 #             player_index = 0
 #         player_surf = player_walk[int(player_index)]
 
-# def collision_coin_sprite():
-#     if py.sprite.spritecollide(player.sprite, coin, False):
-#         return True
-#     else:
-#         return False
+def collision_coin_sprite():
+    if py.sprite.spritecollide(player.sprite, coin, False):
+        #coin.sprite.kill()
+        return True
+
+    else:
+        return False
+
+
 
 # settings for display window
 py.init()
@@ -221,6 +246,11 @@ bg_music.play(loops = -1)
 player = py.sprite.GroupSingle()
 player.add(Player())
 obstacle_group = py.sprite.Group()
+coin = py.sprite.Group()
+
+#score = Score()
+
+
 
 # SURFACES
 # ground/sky surface
@@ -290,6 +320,9 @@ volleyball_animation_timer = py.USEREVENT + 2
 py.time.set_timer(volleyball_animation_timer, 150)
 bird_animation_timer = py.USEREVENT + 2
 py.time.set_timer(bird_animation_timer, 200)
+# coin timer
+coin_timer = py.USEREVENT + 1
+py.time.set_timer(coin_timer, 1200)
 
 # SOUNDS
 coin_collect_sound = py.mixer.Sound('coincollect.mp3')
@@ -321,6 +354,10 @@ while True:
             if event.type == obstacle_timer:
                 obstacle_group.add(Obstacle(choice(['bird', 'volleyball', 'volleyball', 'volleyball'])))
 
+        if game_active:
+            if event.type == coin_timer:
+                coin.add(Coin('coin'))
+
     if game_active == True:
         # placing sky, ground, and score
         screen.blit(sky_surf, (0,0))
@@ -332,15 +369,18 @@ while True:
         player.update()
 
         # moving and displaying coin
-        coin_rect.x -= 8
-        if coin_rect.right < 0:
-            coin_rect.right = randint(1200, 2500)
-        coin_animation()
-        screen.blit(coin_surf, coin_rect)
+        # coin_rect.x -= 8
+        # if coin_rect.right < 0:
+        #     coin_rect.right = randint(1200, 2500)
+        # coin_animation()
+        # screen.blit(coin_surf, coin_rect)
+        coin.draw(screen)
+        coin.update()
 
         # Obstacle movement
         obstacle_group.draw(screen)
         obstacle_group.update()
+
 
         # collision volleyball/birds
         if collision_sprite() == False:
@@ -349,11 +389,11 @@ while True:
             score_count = 0
 
         # collision coin
-        if player_rect.colliderect(coin_rect):
-            coin_collect_sound.play()
-            coin_rect.right = randint(800, 2000)
-            display_score(score_count)
-            score_count += 1
+        #if py.sprite.spritecollide(player.sprite, coin, False):
+            #coin_collect_sound.play()
+            #coin_rect.right = randint(800, 2000)
+            #display_score(score_count)
+            #score_count += 1
 
     else:
         screen.fill("lightskyblue")
