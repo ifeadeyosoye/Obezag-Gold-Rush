@@ -10,7 +10,7 @@ import pygame as py
 from sys import exit
 from random import randint, choice
 
-
+# classes defined
 class Player(py.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -119,6 +119,9 @@ class Obstacle(py.sprite.Sprite):
 
 
 # functions defined
+
+
+# functions defined
 def display_score(score_count):
     """Updating and displaying score"""
     score_message = "Score: {}".format(score_count)
@@ -137,38 +140,6 @@ def display_final_score(score_count):
     py.draw.rect(screen, 'powderblue', ending_score_rect, 10)
     screen.blit(ending_score_surf, ending_score_rect)
 
-def obstacle_movement(obstacle_list):
-    """moving obstacles"""
-    # if list is empty, if statement doesn't run/ checking if list is empty
-    if obstacle_list:
-        for obstacle_rect in obstacle_list:
-            obstacle_rect.x -= 8
-            if obstacle_rect.bottom == 300:
-                screen.blit(volleyball_surf, obstacle_rect)
-            else:
-                screen.blit(bird_surf, obstacle_rect)
-        obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
-        return obstacle_list
-    else: return []
-
-def collisions(player, obstacles):
-    if obstacles:
-        for obstacle_rect in obstacles:
-            if player.colliderect(obstacle_rect): return False
-    return True
-
-def player_animation():
-    """display jump/walking animations for player"""
-    global player_surf, player_index
-
-    if player_rect.bottom < 303:
-        player_surf = player_jump
-    else:
-        player_index += 0.14
-        if player_index > len(player_walk):
-            player_index = 0
-        player_surf = player_walk[int(player_index)]
-
 def coin_animation():
     global coin_surf, coin_index
 
@@ -184,14 +155,43 @@ def collision_sprite():
     else:
         return True
 
+# def obstacle_movement(obstacle_list):
+#     """moving obstacles"""
+#     # if list is empty, if statement doesn't run/ checking if list is empty
+#     if obstacle_list:
+#         for obstacle_rect in obstacle_list:
+#             obstacle_rect.x -= 8
+#             if obstacle_rect.bottom == 300:
+#                 screen.blit(volleyball_surf, obstacle_rect)
+#             else:
+#                 screen.blit(bird_surf, obstacle_rect)
+#         obstacle_list = [obstacle for obstacle in obstacle_list if obstacle.x > -100]
+#         return obstacle_list
+#     else: return []
+
+# def collisions(player, obstacles):
+#     if obstacles:
+#         for obstacle_rect in obstacles:
+#             if player.colliderect(obstacle_rect): return False
+#     return True
+
+# def player_animation():
+#     """display jump/walking animations for player"""
+#     global player_surf, player_index
+#
+#     if player_rect.bottom < 303:
+#         player_surf = player_jump
+#     else:
+#         player_index += 0.14
+#         if player_index > len(player_walk):
+#             player_index = 0
+#         player_surf = player_walk[int(player_index)]
+
 # def collision_coin_sprite():
 #     if py.sprite.spritecollide(player.sprite, coin, False):
 #         return True
 #     else:
 #         return False
-
-
-
 
 # settings for display window
 py.init()
@@ -211,27 +211,25 @@ obstacle_group = py.sprite.Group()
 # ground/sky surface
 sky_surf = py.image.load('Sky.png').convert()
 ground_surf = py.image.load('ground.png').convert()
-
-
 # OBSTACLES SURFACES
 # volleyball surface
-volleyball_frame1 = py.image.load('volleyball11.png').convert_alpha()
-volleyball_frame2 = py.image.load('volleyball2.png').convert_alpha()
-volleyball_frame3 = py.image.load('volleyball3.png').convert_alpha()
-volleyball_frame4 = py.image.load('volleyball4.png').convert_alpha()
-volleyball_frames = [volleyball_frame1, volleyball_frame2, volleyball_frame3, volleyball_frame4]
-volleyball_frame_index = 0
-volleyball_surf = volleyball_frames[volleyball_frame_index]
+# volleyball_frame1 = py.image.load('volleyball11.png').convert_alpha()
+# volleyball_frame2 = py.image.load('volleyball2.png').convert_alpha()
+# volleyball_frame3 = py.image.load('volleyball3.png').convert_alpha()
+# volleyball_frame4 = py.image.load('volleyball4.png').convert_alpha()
+# volleyball_frames = [volleyball_frame1, volleyball_frame2, volleyball_frame3, volleyball_frame4]
+# volleyball_frame_index = 0
+#volleyball_surf = volleyball_frames[volleyball_frame_index]
 #volleyball_rect = volleyball_surf.get_rect(bottomright = (600, 304))
 
 # bird surfaces
-bird_frame1 = py.image.load('bird1.png').convert_alpha()
-bird_frame2 = py.image.load('bird2.png').convert_alpha()
-bird_frames = [bird_frame1, bird_frame2]
-bird_frame_index = 0
-bird_surf = bird_frames[bird_frame_index]
+# bird_frame1 = py.image.load('bird1.png').convert_alpha()
+# bird_frame2 = py.image.load('bird2.png').convert_alpha()
+# bird_frames = [bird_frame1, bird_frame2]
+# bird_frame_index = 0
+# bird_surf = bird_frames[bird_frame_index]
 
-obstacle_rect_list = []
+# obstacle_rect_list = []
 
 # player surface
 player_walk1 = py.image.load("person-walking1.png").convert_alpha()
@@ -260,8 +258,6 @@ player_ending_rect = player_ending_surf1.get_rect(center = (400, 200))
 ending_surf = test_font.render('Press Space to Start Again!', False, (64,64,64))
 ending_rect = ending_surf.get_rect(center = (400, 50))
 
-
-
 # OTHER VALUES
 # player gravity
 player_gravity = 0
@@ -270,7 +266,7 @@ score_count = 0
 # game active
 game_active = True
 
-# Timers
+# TIMERS
 # obstacle timers
 obstacle_timer = py.USEREVENT + 1
 py.time.set_timer(obstacle_timer, 1400)
@@ -304,22 +300,6 @@ while True:
         if game_active:
             if event.type == obstacle_timer:
                 obstacle_group.add(Obstacle(choice(['bird', 'volleyball', 'volleyball', 'volleyball'])))
-                #if randint(0,2):
-                    #obstacle_rect_list.append(volleyball_surf.get_rect(bottomright = (randint(900, 1110), 300)))
-               #else:
-                    #obstacle_rect_list.append(bird_surf.get_rect(bottomright = (randint(900, 1110), 170)))
-
-            if event.type == volleyball_animation_timer:
-                volleyball_frame_index += 1
-                if volleyball_frame_index > (len(volleyball_frames) - 1):
-                    volleyball_frame_index = 0
-                volleyball_surf = volleyball_frames[volleyball_frame_index]
-
-            if event.type == bird_animation_timer:
-                bird_frame_index += 1
-                if bird_frame_index > (len(bird_frames) -1):
-                    bird_frame_index = 0
-                bird_surf = bird_frames[bird_frame_index]
 
     if game_active == True:
         # placing sky, ground, and score
@@ -327,37 +307,20 @@ while True:
         screen.blit(ground_surf, (0,300))
         display_score(score_count)
 
-        # placing and moving volleyball
-       # volleyball_rect.x -= 8
-       # if volleyball_rect.right < 0:
-         #   volleyball_rect.left = 800
-       # screen.blit(volleyball_surf, volleyball_rect)
-
-        # placing and moving coin
-
-
         # Player
-        #player_gravity += 1
-        #player_rect.y += player_gravity
-        #if player_rect.bottom >= 303:
-            #player_rect.bottom = 303
-        #player_animation()
-        #screen.blit(player_surf, player_rect)
         player.draw(screen)
         player.update()
 
-        # Obstacle movement
-        #obstacle_rect_list = obstacle_movement(obstacle_rect_list)
-        obstacle_group.draw(screen)
-        obstacle_group.update()
-
+        # moving and displaying coin
         coin_rect.x -= 8
         if coin_rect.right < 0:
             coin_rect.right = randint(1200, 2500)
         coin_animation()
         screen.blit(coin_surf, coin_rect)
-        #coin.draw(screen)
-        #coin.update()
+
+        # Obstacle movement
+        obstacle_group.draw(screen)
+        obstacle_group.update()
 
         # collision volleyball/birds
         if collision_sprite() == False:
@@ -367,11 +330,9 @@ while True:
 
         # collision coin
         if player_rect.colliderect(coin_rect):
-            coin_rect.right = randint(800, 2400)
+            coin_rect.right = randint(800, 2000)
             display_score(score_count)
             score_count += 1
-
-
 
     else:
         screen.fill("lightskyblue")
@@ -380,7 +341,6 @@ while True:
         py.draw.rect(screen, 'powderblue', ending_rect, 10)
         screen.blit(ending_surf, ending_rect)
         screen.blit(player_ending_surf1, player_ending_rect)
-        obstacle_rect_list.clear()
 
     py.display.update()
     # this while true loop should not run faster than 60 times per second
