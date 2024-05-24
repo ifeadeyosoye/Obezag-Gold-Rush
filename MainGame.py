@@ -3,12 +3,15 @@
 # accumilating "ult" bar. Once triggered, can double jump over flying obstacles to get coins worth double?
 # or maybe extra life?
 # like a health bar that has 3 hearts for 3 extra lives that fills up slowly
-# make coins clear
+# make game pause for game over sound.
+# add back clicking to jump
+# heart system?
 
 # importing modules
 import pygame as py
 from sys import exit
 from random import randint, choice
+import time
 
 # classes defined
 class Player(py.sprite.Sprite):
@@ -25,10 +28,14 @@ class Player(py.sprite.Sprite):
         self.rect = self.image.get_rect(midbottom = (80,303))
         self.gravity = 0
 
+        self.jump_sound = py.mixer.Sound('jump.mp3')
+        self.jump_sound.set_volume(0.5)
+
     def player_input(self):
         keys = py.key.get_pressed()
         if keys[py.K_SPACE] and self.rect.bottom >= 303:
             self.gravity = -19
+            self.jump_sound.play()
 
     def apply_gravity(self):
         self.gravity += 1
@@ -122,6 +129,8 @@ class Obstacle(py.sprite.Sprite):
 
 
 # functions defined
+
+# functions
 def display_score(score_count):
     """Updating and displaying score"""
     score_message = "Score: {}".format(score_count)
@@ -149,7 +158,10 @@ def coin_animation():
     coin_surf = coin_frames[int(coin_index)]
 
 def collision_sprite():
+    global death_sound
+
     if py.sprite.spritecollide(player.sprite, obstacle_group, False):
+        death_sound.play()
         obstacle_group.empty()
         return False
     else:
@@ -195,12 +207,15 @@ def collision_sprite():
 
 # settings for display window
 py.init()
-screen = py.display.set_mode((800, 400))
+screen = py.display.set_mode((800, 400), vsync=1)
 py.display.set_caption('Obezag Gold Rush: Coin Collector')
 pygame_icon = py.image.load('coin1.png').convert_alpha()
 py.display.set_icon(pygame_icon)
 clock = py.time.Clock()
 test_font = py.font.Font('Pixeltype.ttf', 50)
+bg_music = py.mixer.Sound('combined-theme-song-1.mp3')
+bg_music.set_volume(0.3)
+bg_music.play(loops = -1)
 
 # Groups
 player = py.sprite.GroupSingle()
@@ -276,6 +291,11 @@ py.time.set_timer(volleyball_animation_timer, 150)
 bird_animation_timer = py.USEREVENT + 2
 py.time.set_timer(bird_animation_timer, 200)
 
+# SOUNDS
+coin_collect_sound = py.mixer.Sound('coincollect.mp3')
+coin_collect_sound.set_volume(0.8)
+death_sound = py.mixer.Sound('gameover1.mp3')
+death_sound.set_volume(1.5)
 
 # game loop
 while True:
@@ -330,6 +350,7 @@ while True:
 
         # collision coin
         if player_rect.colliderect(coin_rect):
+            coin_collect_sound.play()
             coin_rect.right = randint(800, 2000)
             display_score(score_count)
             score_count += 1
@@ -341,6 +362,7 @@ while True:
         py.draw.rect(screen, 'powderblue', ending_rect, 10)
         screen.blit(ending_surf, ending_rect)
         screen.blit(player_ending_surf1, player_ending_rect)
+
 
     py.display.update()
     # this while true loop should not run faster than 60 times per second
