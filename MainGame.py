@@ -1,13 +1,122 @@
 # things to do
-# music/sound effects; 2nd obstacle; increase difficulty as time goes on; animate objects; extra ability/mechanic (invincibility?), menu screen, tutorial screen, home button in menu screen?
+# music/sound effects; increase difficulty as time goes on; animate objects; extra ability/mechanic (invincibility?), menu screen, tutorial screen, home button in menu screen?
 # accumilating "ult" bar. Once triggered, can double jump over flying obstacles to get coins worth double?
 # or maybe extra life?
 # like a health bar that has 3 hearts for 3 extra lives that fills up slowly
+# make coins clear
 
 # importing modules
 import pygame as py
 from sys import exit
-from random import randint
+from random import randint, choice
+
+
+class Player(py.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        player_walk1 = py.image.load("person-walking1.png").convert_alpha()
+        player_walk2 = py.image.load("person-walking2.png").convert_alpha()
+        player_walk3 = py.image.load("person-walking3.png").convert_alpha()
+        self.player_walk = [player_walk1, player_walk2, player_walk3]
+        self.player_index = 0
+        self.player_jump = py.image.load("person-walking1.png").convert_alpha()
+
+        self.image = self.player_walk[self.player_index]
+        self.rect = self.image.get_rect(midbottom = (80,303))
+        self.gravity = 0
+
+    def player_input(self):
+        keys = py.key.get_pressed()
+        if keys[py.K_SPACE] and self.rect.bottom >= 303:
+            self.gravity = -19
+
+    def apply_gravity(self):
+        self.gravity += 1
+        self.rect.y += self.gravity
+        if self.rect.bottom >= 303:
+            self.rect.bottom = 303
+
+    def animation_state(self):
+        if self.rect.bottom < 303:
+            self.image = self.player_jump
+        else:
+            self.player_index += 0.14
+            if self.player_index > len(self.player_walk):
+                self.player_index = 0
+            self.image = self.player_walk[int(self.player_index)]
+
+
+    def update(self):
+        self.player_input()
+        self.apply_gravity()
+        self.animation_state()
+
+class Obstacle(py.sprite.Sprite):
+    def __init__(self, type):
+        super().__init__()
+        if type == 'bird':
+            bird_frame1 = py.image.load('bird1.png').convert_alpha()
+            bird_frame2 = py.image.load('bird2.png').convert_alpha()
+            self.frames = [bird_frame1, bird_frame2]
+            y_pos = 170
+        else:
+            volleyball_frame1 = py.image.load('volleyball11.png').convert_alpha()
+            volleyball_frame2 = py.image.load('volleyball2.png').convert_alpha()
+            volleyball_frame3 = py.image.load('volleyball3.png').convert_alpha()
+            volleyball_frame4 = py.image.load('volleyball4.png').convert_alpha()
+            self.frames = [volleyball_frame1, volleyball_frame2, volleyball_frame3, volleyball_frame4]
+            y_pos = 300
+
+        self.animation_index = 0
+        self.image = self.frames[self.animation_index]
+        self.rect = self.image.get_rect(midbottom = (randint(900, 1100), y_pos))
+
+    def animation_state(self):
+        self.animation_index += 0.1
+        if self.animation_index > (len(self.frames)):
+            self.animation_index = 0
+        self.image = self.frames[int(self.animation_index)]
+
+    def update(self):
+        self.animation_state()
+        self.rect.x -= 8
+        self.destroy()
+
+    def destroy(self):
+        if self.rect.x <= -100:
+            self.kill()
+
+# class Coin(py.sprite.Sprite):
+#     def __init__(self):
+#         super().__init__()
+#         coin_frame1 = py.image.load('coin1.png').convert_alpha()
+#         coin_frame2 = py.image.load('coin2.png').convert_alpha()
+#         self.coin_frames = [coin_frame1, coin_frame2]
+#
+#         self.coin_index = 0
+#         self.image = self.coin_frames[self.coin_index]
+#         self.rect = self.image.get_rect(bottomright = (randint(1500, 3000), 300))
+#
+#     def animation_state(self):
+#         self.coin_index += 0.045
+#         if self.coin_index > len(self.coin_frames):
+#             self.coin_index = 0
+#         self.image = self.coin_frames[int(self.coin_index)]
+#
+#     def destroy(self):
+#         if collision_coin_sprite():
+#             self.kill()
+#         #screen.blit(self.image, self.rect)
+#
+#     def update(self):
+#         self.animation_state()
+#         self.rect.x -= 8
+#         #self.destroy()
+
+
+
+
+
 
 # functions defined
 def display_score(score_count):
@@ -68,6 +177,20 @@ def coin_animation():
         coin_index = 0
     coin_surf = coin_frames[int(coin_index)]
 
+def collision_sprite():
+    if py.sprite.spritecollide(player.sprite, obstacle_group, False):
+        obstacle_group.empty()
+        return False
+    else:
+        return True
+
+# def collision_coin_sprite():
+#     if py.sprite.spritecollide(player.sprite, coin, False):
+#         return True
+#     else:
+#         return False
+
+
 
 
 # settings for display window
@@ -79,7 +202,10 @@ py.display.set_icon(pygame_icon)
 clock = py.time.Clock()
 test_font = py.font.Font('Pixeltype.ttf', 50)
 
-
+# Groups
+player = py.sprite.GroupSingle()
+player.add(Player())
+obstacle_group = py.sprite.Group()
 
 # SURFACES
 # ground/sky surface
@@ -137,16 +263,12 @@ ending_rect = ending_surf.get_rect(center = (400, 50))
 
 
 # OTHER VALUES
-
 # player gravity
 player_gravity = 0
-
 # coin count
 score_count = 0
-
 # game active
 game_active = True
-
 
 # Timers
 # obstacle timers
@@ -181,10 +303,11 @@ while True:
                 #volleyball_rect.left = 800
         if game_active:
             if event.type == obstacle_timer:
-                if randint(0,2):
-                    obstacle_rect_list.append(volleyball_surf.get_rect(bottomright = (randint(900, 1110), 300)))
-                else:
-                    obstacle_rect_list.append(bird_surf.get_rect(bottomright = (randint(900, 1110), 170)))
+                obstacle_group.add(Obstacle(choice(['bird', 'volleyball', 'volleyball', 'volleyball'])))
+                #if randint(0,2):
+                    #obstacle_rect_list.append(volleyball_surf.get_rect(bottomright = (randint(900, 1110), 300)))
+               #else:
+                    #obstacle_rect_list.append(bird_surf.get_rect(bottomright = (randint(900, 1110), 170)))
 
             if event.type == volleyball_animation_timer:
                 volleyball_frame_index += 1
@@ -211,34 +334,44 @@ while True:
        # screen.blit(volleyball_surf, volleyball_rect)
 
         # placing and moving coin
-        coin_rect.x -= 8
-        if coin_rect.right < 0:
-            coin_rect.right = 800
-        coin_animation()
-        screen.blit(coin_surf, coin_rect)
+
 
         # Player
-        player_gravity += 1
-        player_rect.y += player_gravity
-        if player_rect.bottom >= 303:
-            player_rect.bottom = 303
-        player_animation()
-        screen.blit(player_surf, player_rect)
+        #player_gravity += 1
+        #player_rect.y += player_gravity
+        #if player_rect.bottom >= 303:
+            #player_rect.bottom = 303
+        #player_animation()
+        #screen.blit(player_surf, player_rect)
+        player.draw(screen)
+        player.update()
 
         # Obstacle movement
-        obstacle_rect_list = obstacle_movement(obstacle_rect_list)
+        #obstacle_rect_list = obstacle_movement(obstacle_rect_list)
+        obstacle_group.draw(screen)
+        obstacle_group.update()
+
+        coin_rect.x -= 8
+        if coin_rect.right < 0:
+            coin_rect.right = randint(1200, 2500)
+        coin_animation()
+        screen.blit(coin_surf, coin_rect)
+        #coin.draw(screen)
+        #coin.update()
 
         # collision volleyball/birds
-        if collisions(player_rect, obstacle_rect_list) == False:
+        if collision_sprite() == False:
             game_active = False
             final_score_count = score_count
             score_count = 0
 
         # collision coin
-        if coin_rect.colliderect(player_rect):
-            coin_rect.right = 800
+        if player_rect.colliderect(coin_rect):
+            coin_rect.right = randint(800, 2400)
             display_score(score_count)
             score_count += 1
+
+
 
     else:
         screen.fill("lightskyblue")
