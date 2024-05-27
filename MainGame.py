@@ -365,7 +365,8 @@ def tutorial():
                 if home_button.checkForInput(mouse_pos):
                     main_menu()
 
-        screen.fill('powderblue')
+        tutorial_screen = py.image.load('Tutorial Screen.png').convert_alpha()
+        screen.blit(tutorial_screen, (0,0))
 
         for button in [home_button]:
             button.changeColor(mouse_pos)
