@@ -1,11 +1,8 @@
-# things to do
-# increase difficulty as time goes on;  extra ability/mechanic (invincibility?), tutorial screen,
-# accumilating "ult" bar. Once triggered, can double jump over flying obstacles to get coins worth double?
-# or maybe extra life?
-# like a health bar that has 3 hearts for 3 extra lives that fills up slowly
-# make game pause for game over sound.
-# heart system?
-# hold highest score?
+# Key school themed game that has an obezag character jumping and dodging obstacles in a runner-style game collecting coins
+# features a menu screen, tutorial screen, and game screen
+# holds highest score for time that game is open
+# developed by Ifeoluwa Adeyosoye
+# game last edited 05/28/2024
 
 # importing modules
 import pygame as py
@@ -123,7 +120,7 @@ class Coin(py.sprite.Sprite):
             self.kill()
             score_count += 1
             display_score(score_count)
-            #print(score_count)
+
     def game_over_destroy(self):
         global game_active
 
@@ -179,6 +176,8 @@ def play():
     global event
     global first_time_launching
     global score_count_2
+    global high_score
+    global final_score_count
 
     home_font = py.font.Font('fonts/Pixeltype.ttf', 30)
 
@@ -221,7 +220,7 @@ def play():
 
             if game_active:
                 if event.type == coin_timer:
-                    coin.add(Coin(choice(['coin', 'coin', 'coin'])))
+                    coin.add(Coin(choice(['coin'])))
 
         if game_active == True:
             # placing sky, ground, and score
@@ -255,8 +254,11 @@ def play():
                 score_count = 0
         else:
             # restart screen
+            if high_score < final_score_count:
+                high_score = final_score_count
             screen.fill("lightskyblue")
             display_final_score(final_score_count)
+            display_highest_score(high_score)
             py.draw.rect(screen, 'powderblue', ending_rect)
             py.draw.rect(screen, 'powderblue', ending_rect, 10)
             screen.blit(ending_surf, ending_rect)
@@ -385,16 +387,14 @@ def display_score(score_count):
     py.draw.rect(screen, 'powderblue', score_rect, 10)
     screen.blit(score_surf, score_rect)
 
-
 def display_final_score(score_count):
     """showing final score in ending screen"""
     score_message = "Your Score: {}".format(score_count)
     ending_score_surf = game_font.render("Your Score: {}".format(score_count), False, (64, 64, 64))
-    ending_score_rect = ending_score_surf.get_rect(center=(400, 360))
+    ending_score_rect = ending_score_surf.get_rect(center=(400, 343))
     py.draw.rect(screen, 'powderblue', ending_score_rect)
     py.draw.rect(screen, 'powderblue', ending_score_rect, 10)
     screen.blit(ending_score_surf, ending_score_rect)
-
 
 def collision_sprite():
     global death_sound
@@ -406,13 +406,21 @@ def collision_sprite():
     else:
         return True
 
-
 def collision_coin_sprite():
     if py.sprite.spritecollide(player.sprite, coin, False):
         # coin.sprite.kill()
         return True
     else:
         return False
+
+def display_highest_score(score_count):
+    """showing highest score in ending screen"""
+    score_message = "Your Score: {}".format(score_count)
+    ending_score_surf = game_font.render("Highest Score: {}".format(score_count), False, (64, 64, 64))
+    ending_score_rect = ending_score_surf.get_rect(midbottom=(400, 395))
+    py.draw.rect(screen, 'powderblue', ending_score_rect)
+    py.draw.rect(screen, 'powderblue', ending_score_rect, 10)
+    screen.blit(ending_score_surf, ending_score_rect)
 
 # settings for display window(s)
 py.init()
@@ -443,14 +451,16 @@ ground_surf = py.image.load('ground.png').convert()
 # player surfaces (RESTART)
 player_ending_surf = py.image.load("person_standing.png").convert_alpha()
 player_ending_surf1 = py.transform.scale(player_ending_surf, (192, 252))
-player_ending_rect = player_ending_surf1.get_rect(center = (400, 200))
+player_ending_rect = player_ending_surf1.get_rect(center = (400, 195))
 # text surfaces (RESTART)
 ending_surf = game_font.render('Press Space to Start Again!', False, (64,64,64))
-ending_rect = ending_surf.get_rect(center = (400, 50))
+ending_rect = ending_surf.get_rect(center = (400, 45))
 
 # OTHER VALUES
 # coin count
 score_count = 0
+high_score = 0
+final_score_count = 0
 # game active
 game_active = True
 
