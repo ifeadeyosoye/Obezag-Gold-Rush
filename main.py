@@ -1,7 +1,7 @@
-# Key school themed game that has an obezag character jumping and dodging obstacles in a runner-style game collecting coins
+# obezag character jumping and dodging obstacles in a runner-style game collecting coins
 # features a menu screen, tutorial screen, and game screen
 # holds highest score for time that game is open
-# developed by Ifeoluwa Adeyosoye
+# developed by Ife Ade
 # game last edited 05/28/2024
 
 # importing modules
@@ -15,18 +15,18 @@ class Player(py.sprite.Sprite):
     def __init__(self):
         super().__init__()
         global event
-        player_walk1 = py.image.load("person-walking1.png").convert_alpha()
-        player_walk2 = py.image.load("person-walking2.png").convert_alpha()
-        player_walk3 = py.image.load("person-walking3.png").convert_alpha()
+        player_walk1 = py.image.load("assets/images/person-walking1.png").convert_alpha()
+        player_walk2 = py.image.load("assets/images/person-walking2.png").convert_alpha()
+        player_walk3 = py.image.load("assets/images/person-walking3.png").convert_alpha()
         self.player_walk = [player_walk1, player_walk2, player_walk3]
         self.player_index = 0
-        self.player_jump = py.image.load("person-walking1.png").convert_alpha()
+        self.player_jump = py.image.load("assets/images/person-walking1.png").convert_alpha()
 
         self.image = self.player_walk[self.player_index]
         self.rect = self.image.get_rect(midbottom = (80,303))
         self.gravity = 0
 
-        self.jump_sound = py.mixer.Sound('sounds/jump.mp3')
+        self.jump_sound = py.mixer.Sound('assets/sounds/jump.mp3')
         self.jump_sound.set_volume(0.5)
 
     def player_input(self):
@@ -60,15 +60,15 @@ class Obstacle(py.sprite.Sprite):
     def __init__(self, type):
         super().__init__()
         if type == 'bird':
-            bird_frame1 = py.image.load('bird1.png').convert_alpha()
-            bird_frame2 = py.image.load('bird2.png').convert_alpha()
+            bird_frame1 = py.image.load('assets/images/bird1.png').convert_alpha()
+            bird_frame2 = py.image.load('assets/images/bird2.png').convert_alpha()
             self.frames = [bird_frame1, bird_frame2]
             y_pos = 170
         else:
-            volleyball_frame1 = py.image.load('volleyball11.png').convert_alpha()
-            volleyball_frame2 = py.image.load('volleyball2.png').convert_alpha()
-            volleyball_frame3 = py.image.load('volleyball3.png').convert_alpha()
-            volleyball_frame4 = py.image.load('volleyball4.png').convert_alpha()
+            volleyball_frame1 = py.image.load('assets/images/volleyball11.png').convert_alpha()
+            volleyball_frame2 = py.image.load('assets/images/volleyball2.png').convert_alpha()
+            volleyball_frame3 = py.image.load('assets/images/volleyball3.png').convert_alpha()
+            volleyball_frame4 = py.image.load('assets/images/volleyball4.png').convert_alpha()
             self.frames = [volleyball_frame1, volleyball_frame2, volleyball_frame3, volleyball_frame4]
             y_pos = 300
 
@@ -98,8 +98,8 @@ class Coin(py.sprite.Sprite):
     def __init__(self, type):
         super().__init__()
         if type == 'coin':
-            coin_frame1 = py.image.load('coin1.png').convert_alpha()
-            coin_frame2 = py.image.load('coin2.png').convert_alpha()
+            coin_frame1 = py.image.load('assets/images/coin1.png').convert_alpha()
+            coin_frame2 = py.image.load('assets/images/coin2.png').convert_alpha()
             self.coin_frames = [coin_frame1, coin_frame2]
 
         self.coin_index = 0
@@ -179,7 +179,7 @@ def play():
     global high_score
     global final_score_count
 
-    home_font = py.font.Font('fonts/Pixeltype.ttf', 30)
+    home_font = py.font.Font('assets/fonts/Pixeltype.ttf', 30)
 
     if first_time_launching == True:
         final_score_count = 0
@@ -191,7 +191,7 @@ def play():
         first_time_launching = False
         menu_mouse_pos = py.mouse.get_pos()
 
-        home_image = py.image.load('homeimage.PNG').convert_alpha()
+        home_image = py.image.load('assets/images/homeimage.PNG').convert_alpha()
         home_transformed = py.transform.scale(home_image, (50, 50))
 
         home_button = Button(image=home_transformed, pos=(26, 25), text_input='home', font=home_font, base_color="royalblue4",
@@ -280,21 +280,21 @@ def main_menu():
 
         menu_mouse_pos = py.mouse.get_pos()
 
-        player = py.image.load('person_standing.png').convert_alpha()
+        player = py.image.load('assets/images/person_standing.png').convert_alpha()
         player_transformed = py.transform.scale(player, (240, 315))
         player_rect = player_transformed.get_rect(midbottom = (600, 303))
 
 
-        menu_font = py.font.Font('fonts/prstartk.ttf', 30)
+        menu_font = py.font.Font('assets/fonts/prstartk.ttf', 30)
         menu_text = menu_font.render(' Obezag Gold Rush ', False, 'White')
         menu_text_rect = menu_text.get_rect(center=(400, 45))
-        play_image = py.image.load('Play Rect.png').convert_alpha()
+        play_image = py.image.load('assets/images/Play Rect.png').convert_alpha()
         play_transformed = py.transform.scale(play_image, (185, 55))
 
-        tutorial_image = py.image.load('Options Rect.png').convert_alpha()
+        tutorial_image = py.image.load('assets/images/Options Rect.png').convert_alpha()
         tutorial_transformed = py.transform.scale(tutorial_image, (293, 55))
 
-        quit_image = py.image.load('Quit Rect.png').convert_alpha()
+        quit_image = py.image.load('assets/images/Quit Rect.png').convert_alpha()
         quit_transformed = py.transform.scale(quit_image, (177, 55))
 
         if first_time_launching == True:
@@ -352,9 +352,9 @@ def main_menu():
 def tutorial():
     while True:
         mouse_pos = py.mouse.get_pos()
-        menu_font = py.font.Font('fonts/prstartk.ttf', 15)
+        menu_font = py.font.Font('assets/fonts/prstartk.ttf', 15)
 
-        home_image = py.image.load('homeimage.PNG').convert_alpha()
+        home_image = py.image.load('assets/images/homeimage.PNG').convert_alpha()
         home_transformed = py.transform.scale(home_image, (50, 50))
 
         home_button = Button(image=home_transformed, pos=(35,25), text_input='menu', font=menu_font, base_color="royalblue4", hovering_color="White")
@@ -367,7 +367,7 @@ def tutorial():
                 if home_button.checkForInput(mouse_pos):
                     main_menu()
 
-        tutorial_screen = py.image.load('Tutorial Screen.png').convert_alpha()
+        tutorial_screen = py.image.load('assets/images/Tutorial Screen.png').convert_alpha()
         screen.blit(tutorial_screen, (0,0))
 
         for button in [home_button]:
@@ -426,11 +426,11 @@ def display_highest_score(score_count):
 py.init()
 screen = py.display.set_mode((800, 400), vsync=1)
 py.display.set_caption('Obezag Gold Rush: Coin Collector')
-pygame_icon = py.image.load('coin1.png').convert_alpha()
+pygame_icon = py.image.load('assets/images/coin1.png').convert_alpha()
 py.display.set_icon(pygame_icon)
 clock = py.time.Clock()
-game_font = py.font.Font('fonts/Pixeltype.ttf', 50)
-bg_music = py.mixer.Sound('sounds/combined-theme-song-1.mp3')
+game_font = py.font.Font('assets/fonts/Pixeltype.ttf', 50)
+bg_music = py.mixer.Sound('assets/sounds/combined-theme-song-1.mp3')
 bg_music.set_volume(0.3)
 bg_music.play(loops = -1)
 
@@ -443,13 +443,13 @@ coin = py.sprite.Group()
 
 # SURFACES
 # ground/sky surface
-sky_surf = py.image.load('Sky.png').convert()
-ground_surf = py.image.load('ground.png').convert()
+sky_surf = py.image.load('assets/images/Sky.png').convert()
+ground_surf = py.image.load('assets/images/ground.png').convert()
 
 
 # RESTART SCENE
 # player surfaces (RESTART)
-player_ending_surf = py.image.load("person_standing.png").convert_alpha()
+player_ending_surf = py.image.load("assets/images/person_standing.png").convert_alpha()
 player_ending_surf1 = py.transform.scale(player_ending_surf, (192, 252))
 player_ending_rect = player_ending_surf1.get_rect(center = (400, 195))
 # text surfaces (RESTART)
@@ -473,9 +473,9 @@ coin_timer = py.USEREVENT + 1
 py.time.set_timer(coin_timer, 1200)
 
 # SOUNDS
-coin_collect_sound = py.mixer.Sound('sounds/coincollect.mp3')
+coin_collect_sound = py.mixer.Sound('assets/sounds/coincollect.mp3')
 coin_collect_sound.set_volume(0.8)
-death_sound = py.mixer.Sound('sounds/gameover1.mp3')
+death_sound = py.mixer.Sound('assets/sounds/gameover1.mp3')
 death_sound.set_volume(1.5)
 
 first_time_launching = True
