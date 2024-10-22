@@ -1,7 +1,7 @@
 # obezag character jumping and dodging obstacles in a runner-style game collecting coins
 # features a menu screen, tutorial screen, and game screen
 # holds highest score for time that game is open
-# developed by Ife Ade
+# developed by Ifeoluwa Adeyosoye
 # game last edited 05/28/2024
 
 # importing modules
